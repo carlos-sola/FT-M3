@@ -22,3 +22,26 @@ var beatles=[{
   profilePic:"http://cp91279.biography.com/BIO_Bio-Shorts_0_Ringo-Starr_SF_HD_768x432-16x9.jpg"
 }
 ]
+
+const host= '127.0.0.1' ;
+const port=3000;
+
+const server = http.createServer((req,res)=>{
+  if(req.url=== '/api'){
+    res.writeHead(200,{'Content-Type':'application/json'});
+    return res.end(JSON.stringify(beatles));
+  }
+  if(req.url.substr(0,5) === '/api/'){
+    const beatle= req.url.split('/').pop();
+    const found = beatles.find(b => encodeURI(b.name).toLowerCase() === beatle.toLowerCase());
+    if(found){
+      res.writeHead(200,{'Content-Type':'application/json'});
+      return res.end(JSON.stringify(found));
+    }
+    res.writeHead(400,{'Content-Type':'text/plain'});
+    return res.end(`${encodeURI(beatle)} no es un Beatle`);
+  }
+});
+server.listen(port,host, ()=>{
+  console.log('servidor funcionando en',host,port)
+})
